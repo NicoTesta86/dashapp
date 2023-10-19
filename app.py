@@ -12,6 +12,9 @@ from dash import Dash, dcc, html, callback
 from dash.dependencies import Input, Output, State
 from dash import dash_table
 import dash_bootstrap_components as dbc
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 
 load_dotenv()
