@@ -13,7 +13,7 @@ from dash import dash_table
 import dash_bootstrap_components as dbc
 
 
-dotenv.load_dotenv()
+load_dotenv()
 
 api_key = os.getenv("api_key")
 db_host = os.getenv("host")
