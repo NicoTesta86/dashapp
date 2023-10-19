@@ -1,0 +1,8 @@
+pandas
+matplotlib
+seaborn
+plotly
+sqlalchemy
+python-dotenv
+dash
+dash_bootstrap_components 
