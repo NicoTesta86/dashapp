@@ -2,7 +2,7 @@ pandas
 matplotlib
 seaborn
 plotly
-sqlalchemy
+sqlalchemy == 2.0.22
 python-dotenv
 dash
 dash_bootstrap_components 
