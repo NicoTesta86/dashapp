@@ -7,3 +7,4 @@ python-dotenv
 dash
 dash_bootstrap_components 
 gunicorn
+psycopg2
