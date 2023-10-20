@@ -76,7 +76,7 @@ iso_codes =  {
 
 
 
-df['alpha-3'] = df['country'].map(iso_codes)
+df['iso_codes'] = df['country'].map(iso_codes)
 
 
 df_countries = df[df['country'].isin(['Germany', 'Italy', 'Portugal'])]
@@ -86,7 +86,7 @@ import plotly.express as px
 
 fig = px.choropleth(
     df,
-    locations='country',
+    locations='iso_codes',
     color='avg_temp_month',
     hover_name='country',
     animation_frame='month',
