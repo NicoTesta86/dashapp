@@ -8,7 +8,7 @@ import psycopg2
 from dotenv import load_dotenv
 import os
 import dash
-from dash import Dash, dcc, html, callback
+from dash import Dash, dcc, html
 from dash.dependencies import Input, Output, State
 from dash import dash_table
 import dash_bootstrap_components as dbc
@@ -16,6 +16,7 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text
+from dash.dependencies import Input, Output
 
 
 load_dotenv()
@@ -138,13 +139,18 @@ fig = fig.update_layout(
         plot_bgcolor="#222222", paper_bgcolor="#222222", font_color="white"
     )
 
-graph = dcc.Graph(figure=fig)
+graph = dcc.Graph(id='graph-id', figure=fig)
+
 
 app =dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 
 hidden_columns = ['lat', 'lon', 'alpha-3']
 
-radio= dcc.RadioItems(id="countries",options=['Germany', 'Italy', 'Portugal'], value="Germany", 
+radio= dcc.RadioItems(id="countries",
+                      options=[{'label': 'Germany', 'value': 'Germany'},
+                               {'label': 'Italy', 'value': 'Italy'},
+                               {'label': 'Portugal', 'value': 'Portugal'}],
+                      value="Germany",
                       inline=True, style ={'paddingRight': '30px'})
 
 
@@ -160,7 +166,7 @@ app.layout = html.Div([html.H1('The Avg Temperature in Berlin', style={'textAlig
 
 
 @callback(
-    Output(graph, "figure"), 
+    Output('graph-id', "figure"),
     Input("countries", "value"))
 
 
