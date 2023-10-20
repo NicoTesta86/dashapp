@@ -145,7 +145,7 @@ radio= dcc.RadioItems(id="countries",options=['Germany', 'Italy', 'Portugal'], v
                       inline=True, style ={'paddingRight': '30px'})
 
 
-app.layout = html.Div([html.H1('The Avg Temperature in Germany', style={'textAlign':"center",
+app.layout = html.Div([html.H1('The Avg Temperature in Berlin', style={'textAlign':"center",
                                                                       'color':'blue'}), 
                        html.Div(html.P('Welcome'), style={'marginLeft': 50, 'marginRight': 50}),
                        html.Div([html.Div('Here the challenge fot this week!', 
@@ -170,9 +170,9 @@ def update_bar_chart(country):
              x='month', 
              y='avg_temp_month',  
              color='country',
-             color_discrete_map = {'Germany': '#7FD4C1', 'Italy': '#8690FF', 'Portugal': '#F7C0BB'},
+             color_discrete_map = {'Germany-Berlin': '#7FD4C1', 'Italy-Rome': '#8690FF', 'Portugal-Lisbon': '#F7C0BB'},
              barmode='group',
-             height=300, title = "Germany vs Italy & Portugal",)
+             height=300, title = "Berlin vs Rome & Lisbon",)
     fig = fig.update_layout(
         plot_bgcolor="#222222", paper_bgcolor="#222222", font_color="white"
     )
