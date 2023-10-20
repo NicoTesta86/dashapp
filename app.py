@@ -86,7 +86,7 @@ import plotly.express as px
 
 # Create the animated choropleth map
 fig = px.choropleth(
-    merged_df,
+    df,
     locations="alpha-3",
     color="avg_temp_month",
     animation_frame="year",  
