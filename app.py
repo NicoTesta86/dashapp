@@ -17,6 +17,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text
 from dash.dependencies import Input, Output
+from dash import callback
 
 
 load_dotenv()
