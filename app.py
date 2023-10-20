@@ -8,10 +8,15 @@ import psycopg2
 from dotenv import load_dotenv
 import os
 import dash
-from dash import dcc, html, Input, Output
-import dash_table
+from dash import Dash, dcc, html, callback
+from dash.dependencies import Input, Output, State
+from dash import dash_table
 import dash_bootstrap_components as dbc
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import text
+
 
 load_dotenv()
 
@@ -22,22 +27,29 @@ db_name = os.getenv("dbname")
 db_user = os.getenv("user")
 db_password = os.getenv("password")
 
+
 # Database connection
 DATABASE_URL = (
     f"postgresql+psycopg2://{os.getenv('user')}:{os.getenv('password')}"
     f"@{os.getenv('host')}:{os.getenv('port')}/{os.getenv('dbname')}"
 )
+# Create an engine
 engine = create_engine(DATABASE_URL)
+# Establish a session using the engine
 Session = sessionmaker(bind=engine)
 session = Session()
+# Execute the SQL query and fetch data into a pandas DataFrame
 query = text("SELECT * FROM public.monthly_avg")
 result = session.execute(query)
 df = pd.DataFrame(result.fetchall(), columns=result.keys())
+# Close the session
 session.close()
 
-df_2 = df[df['country'] == "Germany"]
 
-iso_codes = {
+
+df_2=df[df['country'] == "Germany"]
+
+iso_codes =  {
     "Amsterdam": "NL",
     "Berlin": "DE",
     "Brussels": "BE",
@@ -62,10 +74,15 @@ iso_codes = {
     "Zurich": "CH"
 }
 
+
+
 df['alpha-3'] = df['country'].map(iso_codes)
+
 
 df_countries = df[df['country'].isin(['Germany', 'Italy', 'Portugal'])]
 df_germany = df[df['country'].isin(['Germany'])]
+
+import plotly.express as px
 
 fig = px.choropleth(
     df,
@@ -74,14 +91,17 @@ fig = px.choropleth(
     hover_name='country',
     animation_frame='month',
     color_continuous_scale=px.colors.sequential.Plasma,
-    projection='orthographic',
+    projection='orthographic',  # Utilizza la proiezione ortografica
     title='Average Temperature Over Time',
     height=800,
     width=1200
 )
 
+
+# Personalizza l'aspetto della mappa
 fig.update_geos(showcoastlines=True, coastlinecolor="RebeccaPurple")
 
+# Personalizza l'aspetto generale del grafico
 fig.update_layout(
     plot_bgcolor="#222222",
     paper_bgcolor="#222222",
@@ -90,71 +110,80 @@ fig.update_layout(
 
 graph2 = dcc.Graph(figure=fig)
 
-table_updated2 = dash_table.DataTable(
-    df_germany.to_dict('records'),
-    [{"name": i, "id": i} for i in df_germany.columns],
-    style_data={'color': 'white', 'backgroundColor': 'black'},
-    style_header={
-        'backgroundColor': 'rgb(210, 210, 210)',
-        'color': 'black',
-        'fontWeight': 'bold'
-    },
-    style_table={
-        'minHeight': '400px', 'height': '400px', 'maxHeight': '400px',
-        'minWidth': '900px', 'width': '900px', 'maxWidth': '900px',
-        'margin': 'auto'
-    }
-)
 
-fig = px.bar(df_countries,
-             x='month',
-             y='avg_temp_month',
+table_updated2 = dash_table.DataTable(df_germany.to_dict('records'),
+                                  [{"name": i, "id": i} for i in df_germany.columns],
+                               style_data={'color': 'white','backgroundColor': 'black'},
+                              style_header={
+                                  'backgroundColor': 'rgb(210, 210, 210)',
+                                  'color': 'black','fontWeight': 'bold'}, 
+                                     style_table={
+                                         'minHeight': '400px', 'height': '400px', 'maxHeight': '400px',
+                                         'minWidth': '900px', 'width': '900px', 'maxWidth': '900px', 
+                                         'margin': 'auto'} 
+                                     )
+
+
+fig = px.bar(df_countries, 
+             x='month', 
+             y='avg_temp_month',  
              color='country',
              barmode='group',
-             height=300,
-             title="Germany vs Italy & Portugal",
-             color_discrete_map={'Germany': '#7FD4C1', 'Italy': '#8690FF', 'Portugal': '#F7C0BB'})
+             height=300, title = "Germany vs Italy & Portugal",)
 
-fig.update_layout(
-    plot_bgcolor="#222222",
-    paper_bgcolor="#222222",
-    font_color="white"
-)
+fig = fig.update_layout(
+        plot_bgcolor="#222222", paper_bgcolor="#222222", font_color="white"
+    )
 
 graph = dcc.Graph(figure=fig)
 
-app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
+app =dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 
-app.layout = html.Div([
-    html.H1('The Avg Temperature in Germany', style={'textAlign': "center", 'color': 'blue'}),
-    html.Div(html.P('Welcome'), style={'marginLeft': 50, 'marginRight': 50}),
-    html.Div([
-        html.Div('Here the challenge for this week!',
-                 style={'backgroundColor': '#636EFA', 'color': 'white', 'width': '1050px', 'margin': 'auto'}),
-        table_updated2,
-        dcc.Dropdown(
-            id='country-dropdown',
-            options=[
-                {'label': 'Germany', 'value': 'Germany'},
-                {'label': 'Italy', 'value': 'Italy'},
-                {'label': 'Portugal', 'value': 'Portugal'}
-            ],
-            value='Germany',
-            style={'width': '200px'}
-        ),
-        graph,
-        graph2
-    ])
-])
+hidden_columns = ['lat', 'lon', 'alpha-3']
+
+radio= dcc.RadioItems(id="countries",options=['Germany', 'Italy', 'Portugal'], value="Germany", 
+                      inline=True, style ={'paddingRight': '30px'})
 
 
-@app.callback(
-    Output(table_updated2, "data"),
-    Input("country-dropdown", "value"))
-def update_table(selected_country):
-    filtered_df = df[df['country'] == selected_country]
-    return filtered_df.to_dict('records')
+app.layout = html.Div([html.H1('The Avg Temperature in Germany', style={'textAlign':"center",
+                                                                      'color':'blue'}), 
+                       html.Div(html.P('Welcome'), style={'marginLeft': 50, 'marginRight': 50}),
+                       html.Div([html.Div('Here the challenge fot this week!', 
+                                          style={'backgroundColor': '#636EFA', 'color': 'white', 
+                                                 'width': '1050px', 'margin': 'auto' }),
+                                 table_updated2  , radio, graph,  graph2])
+                      ])
+
+
+
+@callback(
+    Output(graph, "figure"), 
+    Input("countries", "value"))
+
+
+
+#let's also define discrete colors for each bar, so we can distinguish them easily, everytime we change our selection
+
+def update_bar_chart(country): 
+    mask = df_countries["country"]==(country)
+    fig =px.bar(df_countries[mask], 
+             x='month', 
+             y='avg_temp_month',  
+             color='country',
+             color_discrete_map = {'Germany': '#7FD4C1', 'Italy': '#8690FF', 'Portugal': '#F7C0BB'},
+             barmode='group',
+             height=300, title = "Germany vs Italy & Portugal",)
+    fig = fig.update_layout(
+        plot_bgcolor="#222222", paper_bgcolor="#222222", font_color="white"
+    )
+
+    return fig 
+
 
 
 if __name__ == "__main__":
     app.run_server()
+
+
+
+server = app.server
