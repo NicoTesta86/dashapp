@@ -8,7 +8,7 @@ import psycopg2
 from dotenv import load_dotenv
 import os
 import dash
-from dash import Dash, dcc, html
+from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from dash import dash_table
 import dash_bootstrap_components as dbc
