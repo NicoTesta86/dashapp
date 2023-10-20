@@ -84,18 +84,21 @@ df_germany = df[df['country'].isin(['Germany'])]
 
 import plotly.express as px
 
+# Create the animated choropleth map
 fig = px.choropleth(
-    df,
-    locations='alpha-3',
-    color='avg_temp_month',
-    hover_name='country',
-    animation_frame='month',
-    color_continuous_scale=px.colors.sequential.Plasma,
-    projection='orthographic',  # Utilizza la proiezione ortografica
-    title='Average Temperature Over Time',
+    merged_df,
+    locations="alpha-3",
+    color="avg_temp_month",
+    animation_frame="year",  
+    scope="europe",
+    title="Temperature Over Time in Selected Countries",
     height=800,
     width=1200
 )
+
+
+# Customize the map appearance if needed
+fig.update_geos(projection_type="natural earth")
 
 
 # Personalizza l'aspetto della mappa
