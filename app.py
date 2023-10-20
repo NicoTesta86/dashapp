@@ -86,7 +86,7 @@ import plotly.express as px
 
 fig = px.choropleth(
     df,
-    locations='alpha-3',
+    locations='iso_codes',
     color='avg_temp_month',
     hover_name='country',
     animation_frame='month',
