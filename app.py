@@ -170,7 +170,7 @@ def update_bar_chart(country):
              x='month', 
              y='avg_temp_month',  
              color='country',
-             color_discrete_map = {'Germany-Berlin': '#7FD4C1', 'Italy-Rome': '#8690FF', 'Portugal-Lisbon': '#F7C0BB'},
+             color_discrete_map = {'Germany': '#7FD4C1', 'Italy': '#8690FF', 'Portugal': '#F7C0BB'},
              barmode='group',
              height=300, title = "Berlin vs Rome & Lisbon",)
     fig = fig.update_layout(
