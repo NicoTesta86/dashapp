@@ -26,11 +26,23 @@ db_name = os.getenv("dbname")
 db_user = os.getenv("user")
 db_password = os.getenv("password")
 
-engine =sqlalchemy.create_engine (f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}")
 
-
-query = "SELECT * FROM monthly_avg"
-df = pd.read_sql_query(query, engine)
+# Database connection
+DATABASE_URL = (
+    f"postgresql+psycopg2://{os.getenv('user')}:{os.getenv('password')}"
+    f"@{os.getenv('host')}:{os.getenv('port')}/{os.getenv('dbname')}"
+)
+# Create an engine
+engine = create_engine(DATABASE_URL)
+# Establish a session using the engine
+Session = sessionmaker(bind=engine)
+session = Session()
+# Execute the SQL query and fetch data into a pandas DataFrame
+query = text("SELECT * FROM public.staging_weather")
+result = session.execute(query)
+data = pd.DataFrame(result.fetchall(), columns=result.keys())
+# Close the session
+session.close()
 
 
 
