@@ -41,7 +41,7 @@ session = Session()
 # Execute the SQL query and fetch data into a pandas DataFrame
 query = text("SELECT * FROM public.staging_weather")
 result = session.execute(query)
-data = pd.DataFrame(result.fetchall(), columns=result.keys())
+df = pd.DataFrame(result.fetchall(), columns=result.keys())
 # Close the session
 session.close()
 
