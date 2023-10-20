@@ -39,7 +39,7 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 # Execute the SQL query and fetch data into a pandas DataFrame
-query = text("SELECT * FROM public.staging_weather")
+query = text("SELECT * FROM public.monthly_avg")
 result = session.execute(query)
 df = pd.DataFrame(result.fetchall(), columns=result.keys())
 # Close the session
