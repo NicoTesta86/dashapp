@@ -91,7 +91,7 @@ fig = px.choropleth(
     df,
     locations="alpha-3",
     color="avg_temp_month",
-    animation_frame="year",  
+    animation_frame="month",  
     scope="europe",
     title="Temperature Over Time in Selected Countries",
     height=800,
@@ -147,7 +147,7 @@ app =dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 
 hidden_columns = ['lat', 'lon', 'alpha-3']
 
-radio= dcc.RadioItems(id="countries",
+drop= dcc.Dropdown(id="countries",
                       options=[{'label': 'Germany', 'value': 'Germany'},
                                {'label': 'Italy', 'value': 'Italy'},
                                {'label': 'Portugal', 'value': 'Portugal'}],
@@ -161,7 +161,7 @@ app.layout = html.Div([html.H1('The Avg Temperature in Berlin', style={'textAlig
                        html.Div([html.Div('Here the challenge fot this week!', 
                                           style={'backgroundColor': '#636EFA', 'color': 'white', 
                                                  'width': '1050px', 'margin': 'auto' }),
-                                 table_updated2  , radio, graph,  graph2])
+                                 table_updated2  , drop, graph,  graph2])
                       ])
 
 
